@@ -1,4 +1,6 @@
-from board import Board
+from manager import GameManager
 
-game = Board()
-game.print_board()
+for i in range(100):
+    game = GameManager()
+    game.main_process()
+    game.finish_process()

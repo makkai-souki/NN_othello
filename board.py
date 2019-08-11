@@ -9,8 +9,8 @@ class Board:
         self.white = 0x0000001008000000  # 白の初期配置
         self.turn = 1  # 現在のターン数
         self.player = False  # 石を置く色
-        # self.setpositions = []  # 置いた場所のリスト
-        # self.reversed = []  # 返した場所のリスト
+        self.setpositions = []  # 置いた場所のリスト
+        self.reversed = []  # 返した場所のリスト
         self.past_black = []  # 黒の過去の状態
         self.past_white = []  # 白の過去の状態
         self.past_player = []  # 過去に打ったplayerを保持
@@ -39,6 +39,7 @@ class Board:
                 print("×", end="")
             if i % 8 == 7:
                 print("")
+        print("")
 
     def convert_input(self, position):
         result = 0x0000000000000001
@@ -47,6 +48,7 @@ class Board:
 
     # 着手可能位置を返す関数
     def check_legal(self, p):
+        # self.print_board()
         if p:
             offence = self.white
             diffence = self.black
@@ -151,6 +153,7 @@ class Board:
         self.past_black.append(self.black)
         self.past_white.append(self.white)
         self.past_player.append(p)
+        self.setpositions.append(position)
         if p:
             offence = self.white
             diffence = self.black
@@ -158,7 +161,6 @@ class Board:
             offence = self.black
             diffence = self.white
         rev = 0
-        self.setpositions.append(position)
         for i in range(8):
             mask = self.transfer(position, i)
             rev_tmp = 0
@@ -174,7 +176,7 @@ class Board:
             self.black = diffence
         else:
             self.white = diffence
-            self.black = diffence
+            self.black = offence
 
     def stone_count(self, bitboard):
         return bin(bitboard).count("1")
