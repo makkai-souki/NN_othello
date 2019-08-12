@@ -1,5 +1,31 @@
 from board import Board
+# from manager import GameManager
 import random
+import numpy as np
+import pandas as pd
+
+evals = [
+    [
+        45.0, -11.0, 4.0, -1.0, -1.0, 4.0, -11.0, 45.0,
+        -11.0, -16.0, -1.0, -3.0, -3.0, -1.0, -16.0, -11.0,
+        4.0, -1.0, 2.0, -1.0, -1.0, 2.0, -1.0, 4.0,
+        -1.0, -3.0, -1.0, 0.0, 0.0, -1.0, -3.0, -1.0,
+        -1.0, -3.0, -1.0, 0.0, 0.0, -1.0, -3.0, -1.0,
+        4.0, -1.0, 2.0, -1.0, -1.0, 2.0, -1.0, 4.0,
+        -11.0, -16.0, -1.0, -3.0, -3.0, -1.0, -16.0,
+        -11.0, 45.0, -11.0, 4.0, -1.0, -1.0, 4.0, -11.0, 45.0
+    ],
+    [
+        30.0, -12.0, 0.0, -1.0, -1.0, 0.0, -12.0, 30.0,
+        -12.0, -15.0, -3.0, -3.0, -3.0, -3.0, -15.0, -12.0,
+        0.0, -3.0, 0.0, -1.0, -1.0, 0.0, -3.0, 0.0,
+        -1.0, -3.0, -1.0, -1.0, -1.0, -1.0, -3.0, -1.0,
+        -1.0, -3.0, -1.0, -1.0, -1.0, -1.0, -3.0, -1.0,
+        0.0, -3.0, 0.0, -1.0, -1.0, 0.0, -3.0, 0.0,
+        -12.0, -15.0, -3.0, -3.0, -3.0, -3.0, -15.0, -12.0,
+        30.0, -12.0, 0.0, -1.0, -1.0, 0.0, -12.0, 30.0
+    ]
+]
 
 
 class Human:
@@ -21,8 +47,6 @@ class RandomAI:
         self.myplayer = player
         self.board.white = white
         self.board.black = black
-        # print("AI")
-        # print(self.myplayer)
         pos = self.convert_to_your_board(self.random_ai())
         return pos
 
@@ -50,3 +74,93 @@ class RandomAI:
             if tmp == 0:
                 break
         return reversivle_positions
+
+
+class NN:
+    def __init__(self, weights):
+        self.weights = weights
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def ReLU(self, x):
+        return np.maximum(0, x)
+
+    def forward(self, vector):
+        layer1 = np.dot(vector, self.weights[0])
+        layer2 = self.sigmoid(layer1)
+        layer3 = np.dot(layer2, self.weights)
+        return layer3
+
+
+class AI_with_NN:
+    def __init__(self):
+        self.Nuro = NN([])
+        self.board = Board()
+        # self.gm = GameManager()
+
+    def AI(self, black, white, player):
+        self.myplayer = player
+        self.board.black = black
+        self.board.white = white
+        scores = []
+        tmp_reverse_pos = self.get_reversible_positions()
+        for pos in tmp_reverse_pos:
+            pass
+
+    def get_reversible_positions(self):
+        reversivle_positions = []
+        tmp = self.board.check_legal(self.myplayer)
+        count = 0
+        while tmp != 0:
+            if (tmp & 1) != 0:
+                reversivle_positions.append(1 << count)
+            tmp = tmp >> 1
+            count += 1
+            if tmp == 0:
+                break
+        return reversivle_positions
+
+    def get_corner_stone(self):
+        corner = 0x8100000000000081
+        black_corner = self.board.stone_count(self.board.black & corner)
+        white_corner = self.board.stone_count(self.board.white & corner)
+        if self.myplayer:
+            return white_corner - black_corner
+        else:
+            return black_corner - white_corner
+
+    def get_stone_diff(self, player):
+        black_count = self.board.stone_count(self.board.black)
+        white_count = self.board.stone_count(self.board.white)
+        if player:
+            return black_count - white_count
+        else:
+            return white_count - black_count
+
+    def get_enemy_set(self, player):
+        count = self.board.stone_count(self.board.check_legal(player))
+        return count
+
+    def get_blank_stone(self):
+        blank = self.board.white | self.board.black
+        return 64 - self.board.stone_count(blank)
+
+    def get_board_score(self, id=0):
+        white_score = 0
+        black_score = 0
+        for i in range(64):
+            if self.board.is_stone(self.board.white, i):
+                white_score += evals[id][i]
+            if self.board.is_stone(self.board.black, i):
+                black_score += evals[id][i]
+        if self.myplayer:
+            return white_score - black_score
+        else:
+            return black_score - white_score
+    
+    
+py = AI_with_NN()
+py.AI(0x0000000810000000, 0x0000001008000000, 0)
+point = py.get_reversible_positions()
+print(point)
