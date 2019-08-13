@@ -1,17 +1,19 @@
 from board import Board
 from player import Human
 from player import RandomAI
+from player import AIwithNN
 
 
 class GameManager:
     def __init__(self):
         self.board = Board()
-        self.white_player = RandomAI()
-        self.black_palyer = RandomAI()
+        self.white_player = AIwithNN()
+        self.black_palyer = AIwithNN()
 
     def check_finish(self):   # 終了ならばTrue
         if self.board.stone_count(self.board.check_legal(True)) == 0 and \
            self.board.stone_count(self.board.check_legal(False)) == 0:
+            # print(self.board.stone_count(self.board.check_legal(True)))
             return True
         else:
             return False
@@ -23,7 +25,7 @@ class GameManager:
             return False
 
     def main_process(self):
-        self.board.print_board()
+        # self.board.print_board()
         while not self.check_finish():
             # print(self.board.player)
             if not self.check_pass(self.board.player):
@@ -42,13 +44,16 @@ class GameManager:
     def finish_process(self):
         white_count = self.board.stone_count(self.board.white)
         black_count = self.board.stone_count(self.board.black)
-        self.board.print_board()
+        # self.board.print_board()
         if white_count < black_count:
-            print("black win")
+            # print("black win")
+            pass
         elif black_count < white_count:
-            print("white win")
+            # print("white win")
+            pass
         else:
-            print("drow")
+            # print("drow")
+            pass
 
     def board_manager(self):  # プレイヤーがpos(int)に置く処理
         # print(self.board.player)

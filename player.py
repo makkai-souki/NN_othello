@@ -89,13 +89,16 @@ class NN:
     def forward(self, vector):
         layer1 = np.dot(vector, self.weights[0])
         layer2 = self.sigmoid(layer1)
-        layer3 = np.dot(layer2, self.weights)
-        return layer3
+        layer3 = np.dot(layer2, self.weights[1])
+        return layer3[0]
 
 
-class AI_with_NN:
+class AIwithNN:
     def __init__(self):
-        self.Nuro = NN([])
+        weights = []
+        weights.append(np.random.rand(6, 10))
+        weights.append(np.random.rand(10, 1))
+        self.Nuro = NN(weights)
         self.board = Board()
         # self.gm = GameManager()
 
@@ -103,10 +106,15 @@ class AI_with_NN:
         self.myplayer = player
         self.board.black = black
         self.board.white = white
-        scores = []
         tmp_reverse_pos = self.get_reversible_positions()
+        output_scores = []
         for pos in tmp_reverse_pos:
-            pass
+            input_scores = self.make_input_vecotr(pos)
+            tmp = self.Nuro.forward(input_scores)
+            output_scores.append(tmp)
+        max_key = np.argmax(output_scores)
+        return_pos = self.convert_to_your_board(tmp_reverse_pos[max_key])
+        return return_pos
 
     def get_reversible_positions(self):
         reversivle_positions = []
@@ -120,6 +128,18 @@ class AI_with_NN:
             if tmp == 0:
                 break
         return reversivle_positions
+
+    def make_input_vecotr(self, position):
+        vector = []
+        self.board.reverse(self.myplayer, position)
+        vector.append(self.get_corner_stone())
+        vector.append(self.get_stone_diff(self.myplayer))
+        vector.append(self.get_board_score())
+        vector.append(self.get_board_score(1))
+        vector.append(self.get_enemy_set(self.myplayer))
+        vector.append(self.get_blank_stone())
+        self.board.undo_turn()
+        return np.array(vector)
 
     def get_corner_stone(self):
         corner = 0x8100000000000081
@@ -158,9 +178,20 @@ class AI_with_NN:
             return white_score - black_score
         else:
             return black_score - white_score
-    
-    
-py = AI_with_NN()
-py.AI(0x0000000810000000, 0x0000001008000000, 0)
-point = py.get_reversible_positions()
-print(point)
+
+    def convert_to_your_board(self, position):
+        for i in range(64):
+            if position & (1 << (63 - i)):
+                return i
+        return 0
+
+
+# py = AIwithNN()
+# position_aaaa = py.AI(0x0000000810000000, 0x0000001008000000, 0)
+# print(position_aaaa)
+# weights = []
+# weights.append(np.random.rand(6, 10))
+# weights.append(np.random.rand(10, 1))
+# vect = np.array([[0, - 3, - 1, - 3,  3, 59]])
+# nuro = NN(weights)
+# nuro.forward(vect)
