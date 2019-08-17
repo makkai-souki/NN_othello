@@ -46,14 +46,11 @@ class GameManager:
         black_count = self.board.stone_count(self.board.black)
         # self.board.print_board()
         if white_count < black_count:
-            # print("black win")
-            pass
+            return -1
         elif black_count < white_count:
-            # print("white win")
-            pass
+            return 1
         else:
-            # print("drow")
-            pass
+            return 0
 
     def board_manager(self):  # プレイヤーがpos(int)に置く処理
         # print(self.board.player)

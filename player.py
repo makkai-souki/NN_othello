@@ -2,7 +2,6 @@ from board import Board
 # from manager import GameManager
 import random
 import numpy as np
-import pandas as pd
 
 evals = [
     [
@@ -94,10 +93,7 @@ class NN:
 
 
 class AIwithNN:
-    def __init__(self):
-        weights = []
-        weights.append(np.random.rand(6, 10))
-        weights.append(np.random.rand(10, 1))
+    def __init__(self, weights=[]):
         self.Nuro = NN(weights)
         self.board = Board()
         # self.gm = GameManager()
