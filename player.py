@@ -100,7 +100,6 @@ class AIwithNN:
         weights.append(np.random.rand(10, 1))
         self.Nuro = NN(weights)
         self.board = Board()
-        # self.gm = GameManager()
 
     def AI(self, black, white, player):
         self.myplayer = player
