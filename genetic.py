@@ -17,7 +17,7 @@ class Genetic:
         self.now_gen = 0  # 現在の世代
         self.elite = Indivisual([])  # 最良の個体
         self.tornament_size = 5
-        self.cxpb = 0.7
+        self.cxpb = 0.8
         self.make_first_generation()
 
     def make_first_generation(self):

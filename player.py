@@ -80,7 +80,8 @@ class NN:
         self.weights = weights
 
     def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
+        a = 0.1
+        return 1 / (1 + np.exp(a * -x))
 
     def ReLU(self, x):
         return np.maximum(0, x)
